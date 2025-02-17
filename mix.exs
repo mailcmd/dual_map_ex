@@ -8,8 +8,7 @@ defmodule DualMap.MixProject do
       elixir: "~> 1.17",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env() == :prod,
-      consolidate_protocols: Mix.env() == :test,
-      description: "A simple a dual-entry map",
+      description: "A simple dual-entry map",
       package: package(),
       deps: deps()
     ]
@@ -32,6 +31,8 @@ defmodule DualMap.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    []
+    [
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
+    ]
   end
 end

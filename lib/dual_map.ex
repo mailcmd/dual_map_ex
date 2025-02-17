@@ -1,6 +1,6 @@
 defmodule DualMap do
   @moduledoc """
-  # DualMap
+
   A DualMap is simply a dual-entry map that allows you to reference pairs of data using both a key or a value. In a DualMap you can look up a value from its key or a key from its value.
 
   In simple terms we could say that a DualMap is a map where there is no difference between key and value, both can be either one or the other.
@@ -184,9 +184,3 @@ defimpl Inspect, for: DualMap do
     to_doc(DualMap.to_list(dual_map), opts)
   end
 end
-
-# defimpl Inspect, for: DualMap do
-#   def inspect(dual_map, opts) do
-#     to_doc(DualMap.to_list(dual_map), opts)
-#   end
-# end
