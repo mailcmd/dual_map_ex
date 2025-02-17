@@ -1,5 +1,5 @@
 # DualMap
-  A DualMap is simply a dual-entry map that allows you to reference pairs of data using both a key or a value. In a DualMap you can look up a value from its key or a key from its value.
+  A DualMap is simply a dual-entry map struct that allows you to reference pairs of data using both, a key or a value. In a DualMap you can look up a value from its key or a key from its value.
 
   In simple terms we could say that a DualMap is a map where there is no difference between key and value, both can be either one or the other.
 
@@ -20,11 +20,26 @@
   ```elixir
   iex> dm = DualMap.new(:hostname, :ip)
   []
-  iex> DualMap.put_ordered(dm, [{"ns3", "192.168.0.4"}, {"ns2", "192.168.0.3"}, {"ns1", "192.168.0.2"}])
-  [{"ns1", "192.168.0.2"}, {"ns2", "192.168.0.3"}, {"ns3", "192.168.0.4"}]
+  iex> DualMap.put_ordered(dm, [
+    {"ns3", "192.168.0.4"},
+    {"ns2", "192.168.0.3"},
+    {"ns1", "192.168.0.2"}
+  ])
+  [
+    {"ns1", "192.168.0.2"},
+    {"ns2", "192.168.0.3"},
+    {"ns3", "192.168.0.4"}
+  ]
   iex> DualMap.delete(dm, :ip, "192.168.0.3")
-  [{"ns1", "192.168.0.2"}, {"ns3", "192.168.0.4"}]
+  [
+    {"ns1", "192.168.0.2"},
+    {"ns3", "192.168.0.4"}
+  ]
   ```
+
+## Full docs
+
+For full documentation follow the link [doc](https://hexdocs.pm/dual_map_ex/)
 
 ## Installation
 

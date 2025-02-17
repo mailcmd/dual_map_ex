@@ -1,7 +1,7 @@
 defmodule DualMap do
   @moduledoc """
 
-  A DualMap is simply a dual-entry map that allows you to reference pairs of data using both a key or a value. In a DualMap you can look up a value from its key or a key from its value.
+  A DualMap is simply a dual-entry map struct that allows you to reference pairs of data using both, a key or a value. In a DualMap you can look up a value from its key or a key from its value.
 
   In simple terms we could say that a DualMap is a map where there is no difference between key and value, both can be either one or the other.
 
@@ -22,10 +22,21 @@ defmodule DualMap do
   ```elixir
   iex> dm = DualMap.new(:hostname, :ip)
   []
-  iex> DualMap.put_ordered(dm, [{"ns3", "192.168.0.4"}, {"ns2", "192.168.0.3"}, {"ns1", "192.168.0.2"}])
-  [{"ns1", "192.168.0.2"}, {"ns2", "192.168.0.3"}, {"ns3", "192.168.0.4"}]
+  iex> DualMap.put_ordered(dm, [
+    {"ns3", "192.168.0.4"},
+    {"ns2", "192.168.0.3"},
+    {"ns1", "192.168.0.2"}
+  ])
+  [
+    {"ns1", "192.168.0.2"},
+    {"ns2", "192.168.0.3"},
+    {"ns3", "192.168.0.4"}
+  ]
   iex> DualMap.delete(dm, :ip, "192.168.0.3")
-  [{"ns1", "192.168.0.2"}, {"ns3", "192.168.0.4"}]
+  [
+    {"ns1", "192.168.0.2"},
+    {"ns3", "192.168.0.4"}
+  ]
   ```
   """
 
@@ -35,13 +46,10 @@ defmodule DualMap do
     __ordered_master_keys: []
   ]
 
-  @typedoc "DualMap"
-  @type t :: %DualMap{}
-
-  @spec new({master_key1 :: any(), master_key2 :: any()}) :: t()
+  @spec new({master_key1 :: any(), master_key2 :: any()}) :: %DualMap{}
   def new({master_key1, master_key2}), do: new(master_key1, master_key2)
 
-  @spec new(master_key1 :: any(), master_key2 :: any()) :: t()
+  @spec new(master_key1 :: any(), master_key2 :: any()) :: %DualMap{}
   def new(master_key1, master_key2) do
     %DualMap{
       __data: %{
@@ -56,7 +64,7 @@ defmodule DualMap do
     }
   end
 
-  @spec delete(t(), master_key1 :: any(), key1 :: any()) :: t()
+  @spec delete(%DualMap{}, master_key1 :: any(), key1 :: any()) :: %DualMap{}
   def delete(dual_map, master_key1, key1) do
     case dual_map.__data[master_key1][key1] do
       key2 when not is_nil(key2) ->
@@ -74,7 +82,7 @@ defmodule DualMap do
     end
   end
 
-  @spec drop(t(), master_key1 :: any(), list()) :: t()
+  @spec drop(%DualMap{}, master_key1 :: any(), list()) :: %DualMap{}
   def drop(dual_map, master_key1, list) do
     list
       |> Enum.reduce(dual_map, fn (key, dm) ->
@@ -94,7 +102,7 @@ defmodule DualMap do
 
   end
 
-  @spec put_ordered(t(), {any(), any()} | list(tuple())) :: t()
+  @spec put_ordered(%DualMap{}, {any(), any()} | list(tuple())) :: %DualMap{}
   def put_ordered(dual_map, {_, _} = pair) do
     [master_key1, _] = dual_map.__ordered_master_keys
     put(dual_map, master_key1, pair)
@@ -105,32 +113,32 @@ defmodule DualMap do
     put_ordered(dual_map, rest)
   end
 
-  @spec put_ordered(t(), any(), any()) :: t()
+  @spec put_ordered(%DualMap{}, any(), any()) :: %DualMap{}
   def put_ordered(dual_map, value1, value2) do
     put_ordered(dual_map, {value1, value2})
   end
 
-  @spec get(t(), any(), any(), any()) :: any()
+  @spec get(%DualMap{}, any(), any(), any()) :: any()
   def get(dual_map, master_key, key, default \\ nil) do
     Map.get(dual_map.__data[master_key], key, default)
   end
 
-  @spec get_map(t(), any()) :: map()
+  @spec get_map(%DualMap{}, any()) :: map()
   def get_map(dual_map, master_key) do
     Map.fetch!(dual_map.__data, master_key)
   end
 
-  @spec keys(t(), any()) :: list()
+  @spec keys(%DualMap{}, any()) :: list()
   def keys(dual_map, master_key) do
     Map.keys(dual_map.__data[master_key])
   end
 
-  @spec values(t(), any()) :: list()
+  @spec values(%DualMap{}, any()) :: list()
   def values(dual_map, master_key) do
     Map.values(dual_map.__data[master_key])
   end
 
-  @spec to_list(t()) :: [{any(), any()}]
+  @spec to_list(%DualMap{}) :: [{any(), any()}]
   def to_list(dual_map, option \\ nil)
   def to_list(dual_map, nil) do
     [master_key, _] = dual_map.__ordered_master_keys
@@ -141,26 +149,26 @@ defmodule DualMap do
     Map.to_list(dual_map.__data[master_key])
   end
 
-  @spec fetch(t(), any(), any()) :: {:ok, any()} | :error
+  @spec fetch(%DualMap{}, any(), any()) :: {:ok, any()} | :error
   def fetch(dual_map, master_key, key) do
     Map.fetch(dual_map.__data[master_key], key)
   end
 
-  @spec fetch!(t(), any(), any()) :: any()
+  @spec fetch!(%DualMap{}, any(), any()) :: any()
   def fetch!(dual_map, master_key, key) do
     Map.fetch!(dual_map.__data[master_key], key)
   end
 
-  @spec equal?(t(), t()) :: boolean()
+  @spec equal?(%DualMap{}, %DualMap{}) :: boolean()
   def equal?(dual_map1, dual_map2), do: Map.equal?(dual_map1, dual_map2)
 
-  @spec count(t()) :: pos_integer()
+  @spec count(%DualMap{}) :: pos_integer()
   def count(dual_map) do
     [master_key, _] = dual_map.__ordered_master_keys
     map_size(dual_map.__data[master_key])
   end
 
-  @spec has?(t(), any()) :: boolean()
+  @spec has?(%DualMap{}, any()) :: boolean()
   def has?(dual_map, key_value) do
     [master_key1, master_key2] = dual_map.__ordered_master_keys
     match?(%{^key_value => _}, dual_map.__data[master_key1])
@@ -168,7 +176,7 @@ defmodule DualMap do
     match?(%{^key_value => _}, dual_map.__data[master_key2])
   end
 
-  @spec member?(t(), {any(), any()}) :: boolean()
+  @spec member?(%DualMap{}, {any(), any()}) :: boolean()
   def member?(dual_map, {key, value}) do
     [master_key1, master_key2] = dual_map.__ordered_master_keys
     match?(%{^key => ^value}, dual_map.__data[master_key1])
