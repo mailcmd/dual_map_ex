@@ -7,7 +7,7 @@ defmodule DualMap do
 
   ## How does it work?
 
-  A DualMap actually stores 2 maps, a direct one with the key => value pairs, and a reverse one with the value => key pairs. At the same time it also stores metadata about the names of the keys (called master keys).
+  A DualMap actually stores 2 maps, a direct one with the key => value pairs, and a reverse one with the value => key pairs. At the same time it also stores metadata about the names (ids) of the datas (called master keys).
 
   To create a new DualMap you must use the `DualMap.new` function. You must pass to it a pair of names that will be the identifiers of the master keys.
 
