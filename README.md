@@ -10,7 +10,7 @@
   To create a new DualMap you must use the `DualMap.new` function. You must pass to it a pair of names that will be the identifiers of the master keys.
 
   ```elixir
-  DualMap.new(:hostname, :ip)
+  DualMap.new({:hostname, :ip})
   ```
 
   The order of the master keys is important. If you later want to make insertions into the DualMap and you use the `DualMap.put_ordered` function the value pairs will assume that they are ordered as defined at the time of creating the DualMap with `DualMap.new`.
@@ -18,7 +18,7 @@
   ## Let's see some examples:
 
   ```elixir
-  iex> dm = DualMap.new(:hostname, :ip)
+  iex> dm = DualMap.new({:hostname, :ip})
   []
   iex> DualMap.put_ordered(dm, [
     {"ns3", "192.168.0.4"},

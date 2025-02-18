@@ -12,7 +12,7 @@ defmodule DualMap do
   To create a new DualMap you must use the `DualMap.new` function. You must pass to it a pair of names that will be the identifiers of the master keys.
 
   ```elixir
-  DualMap.new(:hostname, :ip)
+  DualMap.new({:hostname, :ip})
   ```
 
   The order of the master keys is important. If you later want to make insertions into the DualMap and you use the `DualMap.put_ordered` function the value pairs will assume that they are ordered as defined at the time of creating the DualMap with `DualMap.new`.
@@ -100,7 +100,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Delete a pair of datas and returns the DualMap without that pair. The pair is found looking for `key1` (third parameter) in the the map that has as master key the `master_key1` (second parameter) as key.
+  Delete a pair of datas and returns the DualMap without that pair. The pair is found looking for `key` in the the internal map indexed by `master_key`.
 
   ## Examples
 
@@ -121,7 +121,7 @@ defmodule DualMap do
         {"ns3", "192.168.0.4"}
       ]
   """
-  @spec delete(t(), master_key1 :: any(), key1 :: any()) :: t()
+  @spec delete(t(), master_key :: any(), key :: any()) :: t()
   def delete(dual_map, master_key1, key1) do
     case dual_map.__data[master_key1][key1] do
       key2 when not is_nil(key2) ->
@@ -140,7 +140,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Just the same that `[delete/3](#delete/3)` but you can pass a list of keys to delete.
+  Just the same as `delete/3` but you can pass a list of keys to delete.
 
   ## Examples
 
@@ -158,7 +158,7 @@ defmodule DualMap do
       iex> DualMap.drop(dm, :ip, ["192.168.0.3", "192.168.0.2"])
       [{"ns3", "192.168.0.4"}]
   """
-  @spec drop(t(), master_key1 :: any(), list()) :: t()
+  @spec drop(t(), master_key :: any(), list()) :: t()
   def drop(dual_map, master_key1, list) do
     list
       |> Enum.reduce(dual_map, fn (key, dm) ->
@@ -167,7 +167,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Insert or replace one or more pairs of datas in a DualMap. If the third parameters is a list of tuples, every one is inserted/replaced in the DualMap secuentialy. With this function you need pass the the master_key to indicate which value of the tuple will be interpreted as key and which one as value.
+  Insert or replace one or more pairs of datas in a DualMap. If the third parameters is a list of tuples, every one is inserted/replaced in the DualMap secuentialy. With this function you need pass the a master_key to indicate which value of the tuple will be interpreted as key and which one as value.
 
   ## Examples
 
@@ -208,7 +208,7 @@ defmodule DualMap do
   end
 
   @doc """
-  This function is similar to `[put/3](#put/3)` but you does not need pass a master key because the function will assume that you are sending the keys and values in the same order as you specified when you created the DualMap with `[new/1](#new/1)` or `[new/2](#new/2)`.
+  This function is similar to `put/3` but you does not need pass a master key because the function will assume that you are sending the keys and values in the same order as you defined when you created the DualMap with `new/1` or `new/2`.
 
   ## Examples
       iex> dm = DualMap.new({:hostname, :ip})
@@ -241,7 +241,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Returns the value asociated to `key` taking the map indexed by `master_key`. If `key` does not exists in the map, `default` or `nil` is returned.
+  Returns the value asociated to `key` taking the internal map indexed by `master_key`. If `key` does not exists in the map, `default` or `nil` is returned.
 
   ## Examples
 
@@ -265,7 +265,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Return the complete map indexed by `master_key`.
+  Return the complete internal map indexed by `master_key`.
 
   ## Examples
 
@@ -293,7 +293,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Return a list with all the keys of the map indexed by `master_key`.
+  Return a list with all the keys of the internal map indexed by `master_key`.
 
   ## Examples
 
@@ -317,7 +317,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Return a list with all the values of the map indexed by `master_key`.
+  Return a list with all the values of the internal map indexed by `master_key`.
 
   ## Examples
 
@@ -341,9 +341,9 @@ defmodule DualMap do
   end
 
   @doc """
-  Return a list of the pairs `{key, value}` taking the map indexed by the first master_key defined with `[new/1](#new/1)` or `[new/2](#new/2)`. This function is used by `inspect` to print the struct.
+  Return a list of the pairs `{key, value}` taking the map indexed by the first master_key defined with `new/1` or `new/2`. This function is used by `inspect` to print the DualMap.
 
-  If you pass as option `:pairs_inverted` the list will have the pairs with key/value inverted because will take the map indexed by the second master_key defined with `[new/1](#new/1)` or `[new/2](#new/2)`.
+  If you also pass an option `:pairs_inverted`, the list will have the pairs with key/value inverted because will take the internal map indexed by the second master_key defined with `new/1` or `new/2`.
   """
   @spec to_list(t()) :: [{any(), any()}]
   def to_list(dual_map, option \\ nil)
@@ -357,7 +357,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Just as `[get](#get/4)` but do not accept default parameter. If the key exists, will return the tuple `{:ok, value}` and if not `:error`.
+  Just as `get/4` but do not accept default parameter. If the key exists, will return the tuple `{:ok, value}` and if not `:error`.
 
   ## Examples
 
@@ -384,7 +384,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Work equals to `[fetch/3](#fetch/3)` but erroring out if key doesn't exists.
+  Work equals to `fetch/3` but erroring out if key doesn't exists.
   """
   @spec fetch!(t(), any(), any()) :: any()
   def fetch!(dual_map, master_key, key) do
@@ -394,7 +394,7 @@ defmodule DualMap do
   @doc """
   Checks if two DualMaps are equal.
 
-  Two maps are considered to be equal if they contain the same keys and those keys contain the same values.
+  Two maps are considered to be equal if both internal maps contains the same keys and values.
   """
   @spec equal?(t(), t()) :: boolean()
   def equal?(dual_map1, dual_map2), do: Map.equal?(dual_map1, dual_map2)
@@ -442,7 +442,7 @@ defmodule DualMap do
   end
 
   @doc """
-  Checks if the `pair` tuple of key/value exists within DualMap either as key => value or as value => key.
+  Checks if the pair `key_value` (tuple size 2) exists within DualMap either as key => value or as value => key.
 
   ## Examples
 
@@ -466,7 +466,7 @@ defmodule DualMap do
       iex> DualMap.member?(dm, {"ns1", "192.168.0.4"})
       false
   """
-  @spec member?(t(), pair :: {any(), any()}) :: boolean()
+  @spec member?(t(), pair :: key_value :: {any(), any()}) :: boolean()
   def member?(dual_map, {key, value}) do
     [master_key1, master_key2] = dual_map.__ordered_master_keys
     match?(%{^key => ^value}, dual_map.__data[master_key1])
