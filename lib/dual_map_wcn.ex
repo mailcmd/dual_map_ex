@@ -1,25 +1,25 @@
-defmodule NamedDual.WCN do
+defmodule DualMap.WCN do
   @moduledoc """
-  A NamedDual.WCN is like a DualMap but with column names. So you need to reference columns (called master keys) in most of the calls.
+  A DualMap.WCN is like a DualMap but with column names. So you need to reference columns (called master keys) in most of the calls.
 
   ## How does it work?
 
-  A NamedDual.WCN, as a DualMap stores 2 maps, (a direct and an inverted one), but at the same time it also stores metadata about the column names of the datas (called master keys).
+  A DualMap.WCN, as a DualMap stores 2 maps, (a direct and an inverted one), but at the same time it also stores metadata about the column names of the datas (called master keys).
 
-  To create a new NamedDual.WCN you must use the `NamedDual.WCN.new` function. You must pass to it a pair of names that will be the names of the columns.
+  To create a new DualMap.WCN you must use the `DualMap.WCN.new` function. You must pass to it a pair of names that will be the names of the columns.
 
   ```elixir
-  NamedDual.WCN.new({:hostname, :ip})
+  DualMap.WCN.new({:hostname, :ip})
   ```
 
-  The order of the master keys is important. If you later want to make insertions into the NamedDual.WCN and you use the `NamedDual.WCN.put_ordered` function the value pairs will assume that they are ordered as defined at the time of creating the NamedDual.WCN with `NamedDual.WCN.new`.
+  The order of the master keys is important. If you later want to make insertions into the DualMap.WCN and you use the `DualMap.WCN.put_ordered` function the value pairs will assume that they are ordered as defined at the time of creating the DualMap.WCN with `DualMap.WCN.new`.
 
   ## Let's see some examples:
 
   ```elixir
-  iex> dm = NamedDual.WCN.new({:hostname, :ip})
+  iex> dm = DualMap.WCN.new({:hostname, :ip})
   []
-  iex> NamedDual.WCN.put_ordered(dm, [
+  iex> DualMap.WCN.put_ordered(dm, [
     {"ns3", "192.168.0.4"},
     {"ns2", "192.168.0.3"},
     {"ns1", "192.168.0.2"}
@@ -29,7 +29,7 @@ defmodule NamedDual.WCN do
     {"ns2", "192.168.0.3"},
     {"ns3", "192.168.0.4"}
   ]
-  iex> NamedDual.WCN.delete(dm, :ip, "192.168.0.3")
+  iex> DualMap.WCN.delete(dm, :ip, "192.168.0.3")
   [
     {"ns1", "192.168.0.2"},
     {"ns3", "192.168.0.4"}
@@ -43,20 +43,20 @@ defmodule NamedDual.WCN do
     __ordered_master_keys: []
   ]
 
-  @typedoc "NamedDual.WCN struct"
+  @typedoc "DualMap.WCN struct"
   @type t :: %__MODULE__{}
 
   @doc """
-  Returns an empty NamedDual.WCN struct. The order of the master keys are important for posterior operations with the struct.
+  Returns an empty DualMap.WCN struct. The order of the master keys are important for posterior operations with the struct.
 
   ## Examples
 
-      iex> NamedDual.WCN.new({:hostname, :ip})
+      iex> DualMap.WCN.new({:hostname, :ip})
       []
   """
   @spec new(master_keys :: {master_key1 :: any(), master_key2 :: any()}) :: t()
   def new({master_key1, master_key2}) do
-    %NamedDual.WCN{
+    %DualMap.WCN{
       __data: %{
         master_key1 => %{},
         master_key2 => %{},
@@ -70,16 +70,16 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  Returns a NamedDual.WCN struct initialized with the values indicated in the second argument. As the `new/1` function, the order of the master keys are important for posterior operations with the struct.
+  Returns a DualMap.WCN struct initialized with the values indicated in the second argument. As the `new/1` function, the order of the master keys are important for posterior operations with the struct.
 
   ## Examples
 
       # Initializing with one pair of values
-      iex> NamedDual.WCN.new({:hostname, :ip}, {"ns1", "192.168.0.2"})
+      iex> DualMap.WCN.new({:hostname, :ip}, {"ns1", "192.168.0.2"})
       [{"ns1", "192.168.0.2"}]
 
       # Initializing with more than one pair of values
-      iex> NamedDual.WCN.new({:hostname, :ip}, [
+      iex> DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -97,11 +97,11 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  Delete one or more pairs of datas and returns the NamedDual.WCN without that pairs. The pairs are found looking for `key` in the the internal map indexed by `master_key`.
+  Delete one or more pairs of datas and returns the DualMap.WCN without that pairs. The pairs are found looking for `key` in the the internal map indexed by `master_key`.
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -112,13 +112,13 @@ defmodule NamedDual.WCN do
         {"ns3", "192.168.0.4"}
       ]
 
-      iex> NamedDual.WCN.delete(dm, :ip, "192.168.0.3")
+      iex> DualMap.WCN.delete(dm, :ip, "192.168.0.3")
       [
         {"ns1", "192.168.0.2"},
         {"ns3", "192.168.0.4"}
       ]
 
-      iex> NamedDual.WCN.delete(dm, :ip, ["192.168.0.3", "192.168.0.2"])
+      iex> DualMap.WCN.delete(dm, :ip, ["192.168.0.3", "192.168.0.2"])
       [{"ns3", "192.168.0.4"}]
   """
   @spec delete(t(), master_key :: any(), keys :: any()) :: t()
@@ -149,15 +149,15 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  Insert or replace one or more pairs of datas in a NamedDual.WCN struc. If the third parameters is a list of tuples, every one is inserted/replaced in the NamedDual.WCN secuentialy. With this function you need pass the a master_key to indicate which value of the tuple will be interpreted as key and which one as value.
+  Insert or replace one or more pairs of datas in a DualMap.WCN struc. If the third parameters is a list of tuples, every one is inserted/replaced in the DualMap.WCN secuentialy. With this function you need pass the a master_key to indicate which value of the tuple will be interpreted as key and which one as value.
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip})
+      iex> dm = DualMap.WCN.new({:hostname, :ip})
       []
 
       # Inserting/replacing many
-      iex> NamedDual.WCN.put(dm, :ip, [
+      iex> DualMap.WCN.put(dm, :ip, [
         {"192.168.0.4", "ns3"},
         {"192.168.0.3", "ns2"},
         {"192.168.0.2", "ns1"}
@@ -169,7 +169,7 @@ defmodule NamedDual.WCN do
       ]
 
       Or inserting just one
-      iex> NamedDual.WCN.put(dm, :ip, {"192.168.0.4", "ns3"})
+      iex> DualMap.WCN.put(dm, :ip, {"192.168.0.4", "ns3"})
       [{"ns3", "192.168.0.4"}]
   """
   @spec put(t(), master_key :: any(), {key :: any(), value :: any()} | list(tuple())) :: t()
@@ -190,13 +190,13 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  This function is similar to `put/3` but you does not need to pass a master key because the function will assume that you are sending the keys and values in the same order as you defined when you created the NamedDual.WCN with `new/1` or `new/2`.
+  This function is similar to `put/3` but you does not need to pass a master key because the function will assume that you are sending the keys and values in the same order as you defined when you created the DualMap.WCN with `new/1` or `new/2`.
 
   ## Examples
-      iex> dm = NamedDual.WCN.new({:hostname, :ip})
+      iex> dm = DualMap.WCN.new({:hostname, :ip})
       []
 
-      iex> NamedDual.WCN.put_ordered(dm, [
+      iex> DualMap.WCN.put_ordered(dm, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -228,7 +228,7 @@ defmodule NamedDual.WCN do
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -238,10 +238,10 @@ defmodule NamedDual.WCN do
         {"ns2", "192.168.0.3"},
         {"ns3", "192.168.0.4"}
       ]
-      iex> NamedDual.WCN.get(dm, :ip, "192.168.0.4")
+      iex> DualMap.WCN.get(dm, :ip, "192.168.0.4")
       "ns3"
 
-      iex> NamedDual.WCN.get(dm, :hostname, "ns3")
+      iex> DualMap.WCN.get(dm, :hostname, "ns3")
       "192.168.0.4"
   """
   @spec get(t(), master_key :: any(), key :: any(), default :: any()) :: any()
@@ -254,7 +254,7 @@ defmodule NamedDual.WCN do
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -265,7 +265,7 @@ defmodule NamedDual.WCN do
         {"ns3", "192.168.0.4"}
       ]
 
-      iex> NamedDual.WCN.get_map(dm, :hostname)
+      iex> DualMap.WCN.get_map(dm, :hostname)
       %{
         "ns1" => "192.168.0.2",
         "ns2" => "192.168.0.3",
@@ -282,13 +282,13 @@ defmodule NamedDual.WCN do
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
       ])
 
-      iex> NamedDual.WCN.keys(dm, :hostname)
+      iex> DualMap.WCN.keys(dm, :hostname)
       ["ns1", "ns2", "ns3"]
   """
   @spec keys(t(), master_key :: any()) :: list()
@@ -301,7 +301,7 @@ defmodule NamedDual.WCN do
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -312,7 +312,7 @@ defmodule NamedDual.WCN do
         {"ns3", "192.168.0.4"}
       ]
 
-      iex> NamedDual.WCN.values(dm, :hostname)
+      iex> DualMap.WCN.values(dm, :hostname)
       ["192.168.0.2", "192.168.0.3", "192.168.0.4"]
   """
   @spec values(t(), master_key :: any()) :: list()
@@ -321,7 +321,7 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  Return a list of the pairs `{key, value}` taking the map indexed by the first master_key defined with `new/1` or `new/2`. This function is used by `inspect` to print the NamedDual.WCN.
+  Return a list of the pairs `{key, value}` taking the map indexed by the first master_key defined with `new/1` or `new/2`. This function is used by `inspect` to print the DualMap.WCN.
 
   If you also pass an option `:pairs_inverted`, the list will have the pairs with key/value inverted because will take the internal map indexed by the second master_key defined with `new/1` or `new/2`.
   """
@@ -341,16 +341,16 @@ defmodule NamedDual.WCN do
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
       ])
 
-      iex> NamedDual.WCN.fetch(dm, :ip, "192.168.0.4")
+      iex> DualMap.WCN.fetch(dm, :ip, "192.168.0.4")
       {:ok, "ns3"}
 
-      iex> NamedDual.WCN.fetch(dm, :ip, "192.168.0.6")
+      iex> DualMap.WCN.fetch(dm, :ip, "192.168.0.6")
       :error
   """
   @spec fetch(t(), any(), any()) :: {:ok, any()} | :error
@@ -367,7 +367,7 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  Checks if two NamedDual.WCNs are equal.
+  Checks if two DualMap.WCNs are equal.
 
   Two maps are considered to be equal if both internal maps contains the same keys and values.
   """
@@ -376,7 +376,7 @@ defmodule NamedDual.WCN do
     dual_map1 == dual_map2
 
   @doc """
-  Return de size of the NamedDual.WCN counting the number of pairs.
+  Return de size of the DualMap.WCN counting the number of pairs.
   """
   @spec count(t()) :: pos_integer()
   def count(dual_map) do
@@ -385,11 +385,11 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  Checks if `key` exists within NamedDual.WCN.
+  Checks if `key` exists within DualMap.WCN.
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -400,13 +400,13 @@ defmodule NamedDual.WCN do
         {"ns3", "192.168.0.4"}
       ]
 
-      iex> NamedDual.WCN.has?(dm, "192.168.0.4")
+      iex> DualMap.WCN.has?(dm, "192.168.0.4")
       true
 
-      iex> NamedDual.WCN.has?(dm, "ns2")
+      iex> DualMap.WCN.has?(dm, "ns2")
       true
 
-      iex> NamedDual.WCN.has?(dm, "ns5")
+      iex> DualMap.WCN.has?(dm, "ns5")
       false
   """
   @spec has?(t(), key :: any()) :: boolean()
@@ -418,11 +418,11 @@ defmodule NamedDual.WCN do
   end
 
   @doc """
-  Checks if the pair `key_value` (tuple size 2) exists within NamedDual.WCN either as key => value or as value => key.
+  Checks if the pair `key_value` (tuple size 2) exists within DualMap.WCN either as key => value or as value => key.
 
   ## Examples
 
-      iex> dm = NamedDual.WCN.new({:hostname, :ip}, [
+      iex> dm = DualMap.WCN.new({:hostname, :ip}, [
         {"ns3", "192.168.0.4"},
         {"ns2", "192.168.0.3"},
         {"ns1", "192.168.0.2"}
@@ -433,13 +433,13 @@ defmodule NamedDual.WCN do
         {"ns3", "192.168.0.4"}
       ]
 
-      iex> NamedDual.WCN.member?(dm, {"192.168.0.4", "ns3"})
+      iex> DualMap.WCN.member?(dm, {"192.168.0.4", "ns3"})
       true
 
-      iex> NamedDual.WCN.member?(dm, {"ns3", "192.168.0.4"})
+      iex> DualMap.WCN.member?(dm, {"ns3", "192.168.0.4"})
       true
 
-      iex> NamedDual.WCN.member?(dm, {"ns1", "192.168.0.4"})
+      iex> DualMap.WCN.member?(dm, {"ns1", "192.168.0.4"})
       false
   """
   @spec member?(t(), key_value :: {any(), any()}) :: boolean()
@@ -452,9 +452,9 @@ defmodule NamedDual.WCN do
 
 end
 
-defimpl Inspect, for: NamedDual.WCN do
+defimpl Inspect, for: DualMap.WCN do
   import Inspect.Algebra
   def inspect(dual_map, opts) do
-    to_doc(NamedDual.WCN.to_list(dual_map), opts)
+    to_doc(DualMap.WCN.to_list(dual_map), opts)
   end
 end

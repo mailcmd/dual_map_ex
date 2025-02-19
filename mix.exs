@@ -4,7 +4,7 @@ defmodule DualMap.MixProject do
   def project do
     [
       app: :dual_map_ex,
-      version: "0.2.0",
+      version: "0.2.1",
       elixir: "~> 1.17",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env() == :prod,
