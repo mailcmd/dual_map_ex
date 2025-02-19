@@ -38,9 +38,10 @@ defmodule DualMap do
   """
 
   defstruct [
-    __data: %{},
-    __master_keys_map: %{},
-    __ordered_master_keys: []
+    __data: %{
+      map1: %{},
+      map2: %{}
+    }
   ]
 
   @typedoc "DualMap struct"
