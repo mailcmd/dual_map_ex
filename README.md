@@ -35,7 +35,7 @@ iex> DualMap.delete(dm, "192.168.0.3")
 ]
 ```
 
-# DualMap.WCL 
+# DualMap.WCN
 
 A DualMap.WCN is like a DualMap but with column names. So you need to reference columns (called master keys) in most of the calls.
 
